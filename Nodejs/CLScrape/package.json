@@ -1,0 +1,26 @@
+{
+  "name": "clscrape",
+  "version": "1.0.0",
+  "description": "Used to scrape CL for jeeps",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maj5004/TestAndTune.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maj5004/TestAndTune/issues"
+  },
+  "homepage": "https://github.com/maj5004/TestAndTune#readme",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "express": "^4.14.0",
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^2.2.1",
+    "request": "^2.79.0"
+  }
+}
