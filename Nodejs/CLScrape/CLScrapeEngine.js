@@ -31,6 +31,8 @@ minMiles = '&min_auto_miles=' + minMiles;
 var maxMiles = '';
 maxMiles = '&max_auto_miles=' + maxMiles;
 
+var searchInt = 10 * 60000;
+
 var url = host + section + searchString + sortBy + minPrice + maxPrice +
     minYear + maxPrice + minYear + maxYear + minMiles + maxMiles;
 
@@ -50,6 +52,8 @@ var runSearch = function (callback) {
                 var pid = getPid(this);
                 //HREF
                 var href = getHref(this);
+                //TITLE
+                var title = getTitle(this);
                 //PRICE
                 var price = getPrice(this);
                 //STATE
@@ -59,8 +63,8 @@ var runSearch = function (callback) {
                 //PIC
                 //var pic = getPic(this);
 
-
                 //Create Object with results
+                newResultDetails.title = title;
                 newResultDetails.url = href;
                 newResultDetails.price = price;
                 newResultDetails.state = state;
@@ -85,19 +89,21 @@ var runSearch = function (callback) {
                 callback(justNewResults);
             });
         }
+        //Call Write
+        writeBackToFile(newResult);
     });
-
-    //Call Write
-    // writeBackToFile();
 };
 
 ////Event Emitters and kick of functions
 CLScrapeEngine.prototype.startSearch = function () {
     setInterval(function () {
         runSearch(function (newPosts) {
-            this.emit('newPost', JSON.stringify(newPosts));
+            console.log(Object.keys(newPosts).length)
+            if (Object.keys(newPosts).length != 0) {
+                this.emit('newPost', JSON.stringify(newPosts));
+            }
         }.bind(this));
-    }.bind(this), 1 * 60000);
+    }.bind(this), searchInt);
 };
 
 CLScrapeEngine.prototype.test = function () {
@@ -124,6 +130,13 @@ var getHref = function (html) {
         href = 'https:' + href;
     }
     return href;
+};
+
+//TITLE = Gets title from display
+var getTitle = function (html) {
+    var $ = cheerio.load(html);
+    var title = $(html).children('p').children('a').text();
+    return title;
 };
 
 //PRICE = Get price from html block
@@ -168,7 +181,7 @@ var getPic = function (html) {
 };
 
 //Write new results to file, so they can be compared in next run
-var writeBackToFile = function () {
+var writeBackToFile = function (newResult) {
     fs.writeFile('previousResult.json', JSON.stringify(newResult), function (err) {
         if (err) {
             console.log('ERROR: ' + err);
